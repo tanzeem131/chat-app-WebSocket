@@ -5,10 +5,8 @@ import { useEffect, useRef, useState } from "react";
 function App() {
   const [messages, setMessages] = useState(["Hello from server!"]);
 
-  //@ts-ignore
-  const wsRef = useRef();
-  //@ts-ignore
-  const inputRef = useRef();
+  const wsRef = useRef<WebSocket | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Create new WebSocket connection to local server
@@ -18,7 +16,6 @@ function App() {
       setMessages((m) => [...m, event.data]);
     };
 
-    //@ts-ignore
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -53,7 +50,6 @@ function App() {
       <div className="bg-white border-t border-gray-200 p-4">
         <div className="flex space-x-2">
           <input
-            //@ts-ignore
             ref={inputRef}
             id="message"
             placeholder="Type your message..."
@@ -61,11 +57,9 @@ function App() {
           />
           <button
             onClick={() => {
-              // @ts-ignore
               const message = inputRef.current?.value;
               // Send chat message through WebSocket
-              // @ts-ignore
-              wsRef.current.send(
+              wsRef.current?.send(
                 JSON.stringify({
                   type: "chat",
                   payload: {
@@ -75,7 +69,6 @@ function App() {
               );
 
               if (inputRef.current) {
-                // @ts-ignore
                 inputRef.current.value = "";
               }
             }}
